@@ -1,0 +1,1832 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_uszToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_uszVault",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_multisigGovernance",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "BinSponsorNotProposed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "activateAfter",
+        "type": "uint256"
+      }
+    ],
+    "name": "BinSponsorTimelockNotElapsed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "captureAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "holdAmountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "CaptureExceedsHoldAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint64",
+        "name": "expiresAt",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "currentTimestamp",
+        "type": "uint64"
+      }
+    ],
+    "name": "CardHoldAlreadyExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CardHoldNotActive",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "validAfter",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validUntil",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "currentTimestamp",
+        "type": "uint64"
+      }
+    ],
+    "name": "CardPermissionExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CardPermissionFrozen",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CardPermissionRevoked",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DuplicateCardAuthorization",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EmptySponsorName",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newDailyTotal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyCardLimitUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExceedsCardDailyCap",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "requestedAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPerSwipeUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExceedsCardPerSwipeCap",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint64",
+        "name": "expiresAt",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "currentTimestamp",
+        "type": "uint64"
+      }
+    ],
+    "name": "HoldNotExpiredYet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAuthorizationId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCardAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidCardPermissionSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "maxPerSwipeUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyCardLimitUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidCardSpendLimits",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCardTokenHash",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidShortString",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidUsdcScalingGranularity",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "OnlyMultisigGovernance",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReentrancyGuardReentrantCall",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "SafeERC20FailedOperation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "str",
+        "type": "string"
+      }
+    ],
+    "name": "StringTooLong",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "UnauthorizedBinSponsorOperator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroAddressNotAllowed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newCardMasterNonce",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "AllCardPermissionsRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "sponsorName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "activatedAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "BinSponsorActivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "sponsorName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "activateAfter",
+        "type": "uint256"
+      }
+    ],
+    "name": "BinSponsorProposed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "revokedAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "BinSponsorRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "holdAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "captureAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "refundedExcessUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "settledUsdc6",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "settlementRedeemId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CardAuthorizationCaptured",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "binSponsorOperator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "holdAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "expiresAt",
+        "type": "uint64"
+      }
+    ],
+    "name": "CardAuthorizationHoldPlaced",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "releasedBy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "releasedAmountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "CardAuthorizationReleased",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "binSponsorOperator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "settledUsdc6",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "settlementRedeemId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CardDirectCaptureSettled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "frozen",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "CardPermissionFrozenUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "EIP712DomainChanged",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "CARD_SPEND_PERMISSION_TYPEHASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_CARD_DAILY_LIMIT_USZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_CARD_PER_SWIPE_USZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_CARD_VALIDITY_DURATION",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "HOLD_EXPIRY",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SCALE_FACTOR",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SPONSOR_TIMELOCK_DELAY",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "activateBinSponsor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "binSponsors",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "sponsorName",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "proposedAt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "activateAfter",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isProposed",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isActive",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cachedCardPermissions",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "binSponsorOperator",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "cardTokenHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPerSwipeUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyCardLimitUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validAfter",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validUntil",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cardMasterNonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "captureAmountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "captureCardHold",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "settlementRedeemId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "settledUsdc6",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cardHolds",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "binSponsorOperator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "holdAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "capturedAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "refundedExcessUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dayBucket",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "createdAt",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "expiresAt",
+        "type": "uint64"
+      },
+      {
+        "internalType": "enum USZCardOfframpRouter.HoldStatus",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "cardMasterNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cumulativeCapturedUSZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "dailySpentByCardPermission",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "eip712Domain",
+    "outputs": [
+      {
+        "internalType": "bytes1",
+        "name": "fields",
+        "type": "bytes1"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "verifyingContract",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "extensions",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "frozenCardPermissions",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "cardholderWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getCardAccountSummary",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "uszBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "remainingDailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFrozen",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardAccountSummary",
+        "name": "summary",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getCardAccountSummaryForPermission",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "uszBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "remainingDailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFrozen",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardAccountSummary",
+        "name": "summary",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getCardPermissionDigest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getCardPermissionStructHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "multisigGovernance",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "cardholderSignature",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "holdAmountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "placeCardAuthorizationHold",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "expiresAt",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "processedAuthorizations",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "l2SettlementTreasury",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "sponsorName",
+        "type": "string"
+      }
+    ],
+    "name": "proposeBinSponsor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "releaseCardHold",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "releasedAmountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "revokeAllCardPermissions",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "newCardMasterNonce",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "revokeBinSponsor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bool",
+        "name": "frozen",
+        "type": "bool"
+      }
+    ],
+    "name": "setCardFrozen",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "cardholderSignature",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "settleCardDirectCapture",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "settlementRedeemId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "settledUsdc6",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "cardholderWallet",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "binSponsorOperator",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "cardTokenHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerSwipeUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyCardLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cardMasterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.CardSpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "cardholderSignature",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "authorizationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountUSZ",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "v",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "r",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "s",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct USZCardOfframpRouter.PermitInput",
+        "name": "permitInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "settleCardDirectCaptureWithPermit",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "settlementRedeemId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "settledUsdc6",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalEscrowedHoldUSZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "uszToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "uszVault",
+    "outputs": [
+      {
+        "internalType": "contract IUSZVaultCardOfframp",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

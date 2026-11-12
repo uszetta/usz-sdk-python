@@ -1,0 +1,1393 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_uszToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_agentRouter",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "deadline",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "currentTimestamp",
+        "type": "uint64"
+      }
+    ],
+    "name": "ChargeIntentExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newDailyTotal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyLimitUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExceedsDelegatedDailyCap",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "requestedAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPerTxUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExceedsDelegatedPerTxCap",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "intentNonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "IntentAlreadyExecuted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidChargeAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidPayerPermissionSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recovered",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "expectedSessionSigner",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidSessionSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidShortString",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "maxPerTxUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyLimitUSZ",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidSpendPermissionLimits",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expectedHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "providedHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PermissionHashMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReentrancyGuardReentrantCall",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "SafeERC20FailedOperation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "validAfter",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validUntil",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "currentTimestamp",
+        "type": "uint64"
+      }
+    ],
+    "name": "SpendPermissionExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "SpendPermissionRevoked",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "str",
+        "type": "string"
+      }
+    ],
+    "name": "StringTooLong",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroAddressNotAllowed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newMasterNonce",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "AllSpendPermissionsRevoked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "provider",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "grossAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "netProviderAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "feeUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "remainingDailyLimitUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "intentNonce",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "serviceRef",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DelegatedPointCharged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "EIP712DomainChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sessionSigner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxPerTxUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dailyLimitUSZ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "validAfter",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "validUntil",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "masterNonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "SpendPermissionRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "SpendPermissionRevokedByPayer",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_DAILY_LIMIT_USZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_MAX_PER_TX_USZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_VALIDITY_DURATION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DELEGATED_CHARGE_INTENT_TYPEHASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SPEND_PERMISSION_TYPEHASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "agentRouter",
+    "outputs": [
+      {
+        "internalType": "contract IUSZAgentRouterDelegated",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "dailySpentUSZ",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "delegationMasterNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "eip712Domain",
+    "outputs": [
+      {
+        "internalType": "bytes1",
+        "name": "fields",
+        "type": "bytes1"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "verifyingContract",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "extensions",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payerSignature",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "permissionHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "serviceRef",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "intentNonce",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "deadline",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.DelegatedChargeIntent",
+        "name": "intent",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "sessionSignature",
+        "type": "bytes"
+      }
+    ],
+    "name": "executeDelegatedCharge",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "netProviderAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feeUSZ",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payerSignature",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "permissionHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "serviceRef",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "intentNonce",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "deadline",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.DelegatedChargeIntent",
+        "name": "intent",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "sessionSignature",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "v",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "r",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "s",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.PermitInput",
+        "name": "permitInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "executeDelegatedChargeWithPermit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "netProviderAmountUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feeUSZ",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "permissionHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "serviceRef",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "intentNonce",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "deadline",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.DelegatedChargeIntent",
+        "name": "intent",
+        "type": "tuple"
+      }
+    ],
+    "name": "getIntentDigest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "permissionHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "serviceRef",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "intentNonce",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "deadline",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.DelegatedChargeIntent",
+        "name": "intent",
+        "type": "tuple"
+      }
+    ],
+    "name": "getIntentStructHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getPermissionDigest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getPermissionStructHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getPointAccountSummary",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "uszBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "remainingDailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.PointAccountSummary",
+        "name": "summary",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      }
+    ],
+    "name": "getPointAccountSummaryForPermission",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "uszBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "remainingDailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.PointAccountSummary",
+        "name": "summary",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "payerRevokedPermissions",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "permissionMetaCache",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxPerTxUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dailyLimitUSZ",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validAfter",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "validUntil",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint256",
+        "name": "masterNonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sessionSigner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPerTxUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dailyLimitUSZ",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validAfter",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "validUntil",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "salt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "masterNonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct USZSpendDelegationRouter.SpendPermission",
+        "name": "permission",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payerSignature",
+        "type": "bytes"
+      }
+    ],
+    "name": "registerPermission",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "revokeAllPermissions",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "newMasterNonce",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "permissionHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "revokePermission",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "revokedPermissions",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "usedIntentNonce",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "uszToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

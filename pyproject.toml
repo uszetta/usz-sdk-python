@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usz-sdk"
+version = "0.0.5"
+description = "Open-source Python SDK for US Zetta (USZ — 100% USDC-Backed Zero-Gas Agentic Payments, Zero-Custody Delegated Points, Non-Custodial Visa/Mastercard Offramp & QIXX Gasless Claim Sponsorship)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "US Zetta", email = "admin@uszetta.com" }
+]
+dependencies = [
+  "web3>=6.15.0",
+  "eth-account>=0.11.0",
+  "fastapi>=0.110.0",
+  "uvicorn>=0.29.0",
+  "httpx>=0.27.0",
+  "pytest>=8.0.0",
+  "pytest-asyncio>=0.23.0",
+]
+
+[project.scripts]
+usz-cli = "usz_sdk.cli:main"
+
+[project.urls]
+Homepage = "https://uszetta.com"
+Repository = "https://github.com/uszetta/usz-sdk-python"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["usz_sdk*"]
+
+[tool.setuptools.package-data]
+usz_sdk = ["abis/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
